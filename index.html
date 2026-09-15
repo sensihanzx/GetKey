@@ -3,73 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SENSI HANZX - FAKE LAG | GENERADOR DE KEYS</title>
+<title>SENSI HANZX - FAKE LAG</title>
 <style>
-body{
-  background:#0a0a0a;
-  color:white;
-  font-family: Arial, sans-serif;
-  text-align:center;
-  padding:30px;
-}
-h1{color:#00ff88; letter-spacing:2px; margin-bottom:5px;}
-h2{color:white; font-weight:normal; letter-spacing:3px;}
-.key-box{
-  background:#1a1a1a;
-  border:2px solid #00ff88;
-  padding:20px;
-  margin:20px auto;
-  max-width:400px;
-  border-radius:12px;
-  font-size:22px;
-  letter-spacing:2px;
-  font-weight:bold;
-}
-button{
-  background:#00ff88;
-  border:none;
-  padding:15px 30px;
-  font-size:18px;
-  font-weight:bold;
-  border-radius:10px;
-  cursor:pointer;
-}
-.whatsapp-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  background:#25D366;
-  color:white;
-  text-decoration:none;
-  padding:12px 20px;
-  border-radius:10px;
-  margin:25px auto;
-  max-width:300px;
-  font-weight:bold;
-}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+body{margin:0; min-height:100vh; background:radial-gradient(circle at top,#102a1e,#020202 70%); color:white; font-family:'Orbitron',sans-serif; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+#particles{position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;}
+.card{width:90%; max-width:420px; background:rgba(15,15,15,0.9); border:1px solid #00ff88; border-radius:24px; padding:30px 24px; box-shadow:0 0 40px rgba(0,255,136,0.25); text-align:center; animation:pop 0.7s ease;}
+@keyframes pop{from{transform:scale(0.8) translateY(30px); opacity:0} to{transform:scale(1) translateY(0); opacity:1}}
+h1{color:#00ff88; text-shadow:0 0 15px #00ff88; font-size:22px; margin:0;}
+h2{font-size:11px; letter-spacing:5px; opacity:0.6; margin:6px 0 0 0;}
+.stats{display:flex; justify-content:space-between; margin:20px 0 10px 0; font-size:10px; opacity:0.7;}
+.stats span{color:#00ff88;}
+.key-box{background:#000; border:1.5px dashed #00ff88; padding:18px; border-radius:14px; font-size:19px; letter-spacing:2px; margin:12px 0; transition:0.4s;}
+.key-box.active{border-style:solid; box-shadow:0 0 25px #00ff88; transform:scale(1.06);}
+button{width:100%; padding:16px; border:none; border-radius:14px; background:linear-gradient(90deg,#00ff88,#00b86b); font-family:'Orbitron'; font-weight:900; font-size:15px; cursor:pointer; box-shadow:0 0 20px rgba(0,255,136,0.6); transition:0.2s;}
+button:active{transform:scale(0.96);}
+button:disabled{opacity:0.5; filter:grayscale(1);}
+.whatsapp-btn{margin-top:16px; display:flex; align-items:center; justify-content:center; gap:10px; background:#111; border:1px solid #25D366; padding:12px; border-radius:12px; color:white; text-decoration:none; font-size:12px; transition:0.3s;}
+.whatsapp-btn:hover{background:#25D366; box-shadow:0 0 15px #25D366;}
+.toast{position:fixed; bottom:25px; left:50%; transform:translateX(-50%) translateY(120px); background:#00ff88; color:black; padding:12px 28px; border-radius:30px; font-family:Arial; font-weight:900; opacity:0; transition:0.4s; z-index:99;}
+.toast.show{transform:translateX(-50%) translateY(0); opacity:1;}
+.confetti{position:fixed; width:8px; height:8px; top:-10px; animation:fall 3s linear forwards;}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);}}
 </style>
 </head>
 <body>
-
-<h1>SENSI HANZX - FAKE LAG</h1>
-<h2>GENERADOR DE KEYS</h2>
-
-<p>Tu Key</p>
-<div class="key-box" id="key">XXXX-XXXX-XXXX-XXXX</div>
-
-<button onclick="generar()">Generar Mi Key</button>
-
-<a class="whatsapp-btn" href="https://whatsapp.com/channel/0029VbDbQ5YISTkTelvtQF1j" target="_blank">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="24">
-  CANAL DE WHATSAPP
-</a>
+<canvas id="particles"></canvas>
+<div class="card">
+  <h1>SENSI HANZX - FAKE LAG</h1>
+  <h2>GENERADOR DE KEYS</h2>
+  <div class="stats">
+    <div>ONLINE: <span id="online">1,284</span></div>
+    <div>GENERADAS: <span id="gen">4,392</span></div>
+  </div>
+  <div style="font-size:10px; opacity:0.5; margin-top:5px;">Tu Key</div>
+  <div class="key-box" id="key">XXXX-XXXX-XXXX-XXXX</div>
+  <button id="btn" onclick="generar()">GENERAR MI KEY</button>
+  <a class="whatsapp-btn" href="https://whatsapp.com/channel/0029VbDbQ5YISTkTelvtQF1j" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="20"> CANAL DE WHATSAPP
+  </a>
+</div>
+<div class="toast" id="toast">¡COPIADO! SENSI-HANZX-P4XS</div>
 
 <script>
+// Contadores falsos vivos
+setInterval(()=>{
+  document.getElementById("online").innerText = (1200 + Math.floor(Math.random()*200)).toLocaleString();
+},2000);
+
+let total = 4392;
 function generar(){
-  document.getElementById("key").innerText = "SENSI-HANZX-P4XS";
+  const key = "SENSI-HANZX-P4XS";
+  const box = document.getElementById("key");
+  const btn = document.getElementById("btn");
+  
+  // efecto sonido
+  const audio = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3");
+  audio.volume=0.5; audio.play();
+
+  box.classList.remove("active");
+  void box.offsetWidth;
+  box.innerText = key;
+  box.classList.add("active");
+
+  navigator.clipboard.writeText(key);
+  document.getElementById("toast").classList.add("show");
+  setTimeout(()=>document.getElementById("toast").classList.remove("show"),2500);
+  
+  // confeti
+  for(let i=0;i<30;i++){
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=["#00ff88","#25D366","#ffffff"][Math.floor(Math.random()*3)];
+    c.style.animationDelay=Math.random()*0.5+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+  total++; document.getElementById("gen").innerText=total.toLocaleString();
+  btn.innerText="¡KEY GENERADA!";
+  btn.disabled=true;
+  setTimeout(()=>{btn.innerText="GENERAR MI KEY"; btn.disabled=false;},3000);
 }
 </script>
-
 </body>
 </html>
